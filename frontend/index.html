@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Rupan Kumar Yadav - Full Stack Developer. Java, Spring Boot, HTML, CSS, JavaScript, MySQL." />
+  <title>Rupan Kumar Yadav | Full Stack Developer</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+
+<!-- SCROLL PROGRESS -->
+<!-- LOADING SCREEN -->
+<div id="loader">
+  <img src="assets/logo.png" alt="RTech" class="loader-logo" />
+  <div class="loader-bar-wrap">
+    <div class="loader-bar"></div>
+  </div>
+  <div class="loader-text">Loading RTech Portfolio...</div>
+</div>
+
+<div id="progress-bar"></div>
+<!-- ═══════════════════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════════════════ -->
+<nav id="navbar">
+  <div class="nav-logo">
+  <img src="assets/logo.png" alt="RTech Logo" style="height:38px; width:auto;" />
+  </div>
+
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#achievements">Achievements</a></li>
+    <li><a href="#contact" class="nav-cta">Contact</a></li>
+  </ul>
+
+  <span class="api-badge offline" id="api-badge">
+    <span class="dot"></span> Backend Offline
+  </span>
+
+  <div style="display:flex;align-items:center;gap:.8rem">
+    <button class="theme-toggle" id="theme-toggle" title="Toggle Dark/Light Mode">🌙</button>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mob-menu">
+  <a href="#home">Home</a>
+  <a href="#about">About</a>
+  <a href="#skills">Skills</a>
+  <a href="#projects">Projects</a>
+  <a href="#contact">Contact</a>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 1 — HOME
+════════════════════════════════════════════════════════ -->
+<section id="home">
+  <div class="wrap">
+    <div class="hero-inner">
+
+      <!-- Left -->
+      <div class="hero-left">
+        <div class="avail-badge fade" id="avail-badge">
+          <span class="dot"></span> Available for Opportunities
+        </div>
+
+        <h1 class="hero-name fade d1">
+          <span id="hero-name-1">Rupan Kumar</span><br />
+          <span class="grad" id="hero-name-2">Yadav</span>
+        </h1>
+
+        <div class="hero-role fade d1">
+          &gt; <span id="typed-role">Full Stack Developer</span><span class="cursor"></span>
+        </div>
+
+        <p class="hero-desc fade d2" id="hero-desc">
+          I build powerful backends with Java & Spring Boot and beautiful frontends with HTML, CSS & JavaScript.
+        </p>
+
+        <div class="hero-btns fade d2">
+          <a href="#projects" class="btn btn-p">View Projects →</a>
+          <a href="#contact"  class="btn btn-o">Hire Me ✉</a>
+          <a href="assets/resume.pdf" download class="btn btn-r">📄 Download Resume</a>
+        </div>
+
+        <div class="hero-stats fade d2" id="hero-stats">
+          <!-- Rendered by script.js from data.js -->
+        </div>
+      </div>
+
+      <!-- Right — Photo -->
+      <div class="hero-right fade">
+        <div class="float-card">
+          <div class="fc-ico">☕</div>
+          <div class="fc-val">Java</div>
+          <div class="fc-lbl">Backend Dev</div>
+        </div>
+
+        <div class="photo-wrap">
+          <div class="photo-border"></div>
+          <div class="photo-inner" id="photo-inner">
+            <div class="photo-ph" id="photo-ph">
+              <div class="ico">📸</div>
+              <p>Click to upload<br />your photo</p>
+              <span>JPG / PNG</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="photo-badge">
+          <span class="green-dot"></span> Open to Work
+        </div>
+
+        <input type="file" id="photo-input" accept="image/*" />
+      </div>
+
+    </div>
+  </div>
+</section>
+<!-- VISITOR COUNTER STRIP -->
+<div class="visitor-strip">
+  <div class="wrap">
+    <div class="visitor-inner">
+      <div class="v-item">
+        <span class="v-icon">👁️</span>
+        <span class="v-num" id="v-total">500+</span>
+        <span class="v-label">Total Visitors</span>
+      </div>
+      <div class="v-item">
+        <span class="v-icon">🚀</span>
+        <span class="v-num">4+</span>
+        <span class="v-label">Projects Built</span>
+      </div>
+      <div class="v-item">
+        <span class="v-icon">⭐</span>
+        <span class="v-num" id="v-likes">0+</span>
+        <span class="v-label">Project Likes</span>
+      </div>
+      <div class="v-item">
+        <span class="v-icon">💼</span>
+        <span class="v-num">Open</span>
+        <span class="v-label">to Work</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 2 — ABOUT
+════════════════════════════════════════════════════════ -->
+<section id="about">
+  <div class="wrap">
+    <div class="sec-label fade">about me</div>
+    <h2 class="sec-title fade">Who Am I?</h2>
+    <div class="sec-line fade"></div>
+
+    <div class="about-grid">
+
+      <!-- Left — Text + Info -->
+      <div class="fade">
+        <div class="about-text" id="about-text">
+          <!-- Rendered by script.js -->
+        </div>
+        <div class="info-grid" id="info-grid">
+          <!-- Rendered by script.js -->
+        </div>
+      </div>
+
+      <!-- Right — Education -->
+      <div class="fade d1">
+        <div class="sec-label" style="margin-bottom:1.1rem">education</div>
+        <div class="edu-tl" id="edu-timeline">
+          <!-- Rendered by script.js -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 3 — SKILLS
+════════════════════════════════════════════════════════ -->
+<section id="skills">
+  <div class="wrap">
+    <div class="sec-label fade">tech stack</div>
+    <h2 class="sec-title fade">Skills & Technologies</h2>
+    <div class="sec-line fade"></div>
+
+    <div id="skills-container">
+      <!-- Rendered by script.js from data.js -->
+      <!-- Add more skills in data.js — grid auto-adjusts -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 4 — PROJECTS
+════════════════════════════════════════════════════════ -->
+<section id="projects">
+  <div class="wrap">
+    <div class="sec-label fade">my work</div>
+    <h2 class="sec-title fade">Featured Projects</h2>
+    <div class="sec-line fade"></div>
+
+    <div id="projects-container">
+      <!-- Rendered by script.js from data.js -->
+      <!-- Add more projects in data.js — grid auto-adjusts -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 5 — ACHIEVEMENTS
+════════════════════════════════════════════════════════ -->
+<section id="achievements">
+  <div class="wrap">
+    <div class="sec-label fade">credentials</div>
+    <h2 class="sec-title fade">Achievements & Certifications</h2>
+    <div class="sec-line fade"></div>
+    <div id="achievements-container">
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 5 — CONTACT
+════════════════════════════════════════════════════════ -->
+<section id="contact">
+  <div class="wrap">
+    <div class="sec-label fade">get in touch</div>
+    <h2 class="sec-title fade">Contact Me</h2>
+    <div class="sec-line fade"></div>
+
+    <div class="contact-grid">
+
+      <!-- Left — Links -->
+      <div class="contact-left fade">
+        <p>
+          I am open to job opportunities, internships, freelance projects
+          and collaborations. Send me a message and I will reply within 24 hours!
+        </p>
+        <div class="contact-links" id="contact-links">
+          <!-- Rendered by script.js -->
+        </div>
+      </div>
+
+      <!-- Right — Form -->
+      <div class="cf-card fade d1">
+        <form id="contact-form">
+          <div class="form-row">
+            <div class="fg">
+              <label for="f-name">Full Name</label>
+              <input id="f-name" type="text" placeholder="John Doe" required />
+            </div>
+            <div class="fg">
+              <label for="f-email">Email Address</label>
+              <input id="f-email" type="email" placeholder="john@example.com" required />
+            </div>
+          </div>
+          <div class="fg">
+            <label for="f-subject">Subject</label>
+            <input id="f-subject" type="text" placeholder="Job Opportunity / Project Collaboration" required />
+          </div>
+          <div class="fg">
+            <label for="f-message">Message</label>
+            <textarea id="f-message" rows="5" placeholder="Hi Rupan, I would like to discuss..." required></textarea>
+          </div>
+          <button type="submit" class="sub-btn" id="submit-btn">
+            Send Message ✉
+          </button>
+          <div id="form-msg"></div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">RTech</div>
+        <p class="footer-tagline">Full Stack Developer building reliable backends with Java &amp; Spring Boot, and clean, responsive frontends. Open to job opportunities, freelance work and collaborations.</p>
+        <div class="footer-socials">
+          <a href="https://github.com/RupankumarYadav" target="_blank" class="footer-social-btn" title="GitHub">🐙</a>
+          <a href="https://linkedin.com/in/rupan-kumar-yadav" target="_blank" class="footer-social-btn" title="LinkedIn">💼</a>
+          <a href="mailto:rupantech2026@gmail.com" class="footer-social-btn" title="Email">📧</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Quick Links</div>
+        <div class="footer-links">
+          <a href="#home">Home</a>
+          <a href="#about">About</a>
+          <a href="#skills">Skills</a>
+          <a href="#projects">Projects</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Get In Touch</div>
+        <div class="footer-links">
+          <a href="#contact">Contact Me</a>
+          <a href="assets/resume.pdf" download>Download Resume</a>
+          <a href="#achievements">Achievements</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Designed & Built by <strong>Rupan Kumar Yadav</strong> &nbsp;|&nbsp; <strong>RTech</strong> © 2025</p>
+      <p class="foot-mono">&lt; Java + Spring Boot + MySQL + HTML + CSS + JavaScript /&gt;</p>
+    </div>
+  </div>
+</footer>
+
+<!-- BACK TO TOP -->
+<button id="back-to-top" title="Back to Top">↑</button>
+
+
+<!-- Data file — pehle load hota hai -->
+<script src="data.js"></script>
+<!-- Main JS -->
+<script src="script.js"></script>
+
+</body>
+</html>

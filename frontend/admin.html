@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RTech Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #0a0a0f;
+    color: #e2e8f0;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+:root {
+    --accent: #6366f1;
+    --cyan: #06b6d4;
+    --green: #10b981;
+    --pink: #f472b6;
+    --orange: #f59e0b;
+    --card: #111120;
+    --border: rgba(255, 255, 255, .07);
+    --muted: #64748b;
+    --input-bg: #0d0d1a;
+    --input-color: #e2e8f0;
+    --input-border: rgba(255, 255, 255, .1);
+}
+
+/* ==========================================
+   LOGIN 
+   ========================================== */
+#login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0a0a0f, #1a0d3e, #0d1a3e);
+    padding: 1rem;
+}
+
+.login-card {
+    background: #111120;
+    border: 1px solid rgba(255, 255, 255, .07);
+    border-radius: 20px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
+}
+
+.login-logo {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.login-logo img {
+    width: 60px;
+    margin: 0 auto .8rem;
+}
+
+.login-logo h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.login-logo p {
+    color: #64748b;
+    font-size: .85rem;
+    margin-top: .3rem;
+}
+
+.form-group {
+    margin-bottom: 1.1rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: .78rem;
+    color: #64748b;
+    margin-bottom: 6px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.form-group input {
+    width: 100%;
+    background: #0d0d1a;
+    border: 1px solid rgba(255, 255, 255, .07);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #e2e8f0;
+    font-family: 'Inter', sans-serif;
+    font-size: .9rem;
+    outline: none;
+    transition: border-color .2s;
+}
+
+.form-group input:focus {
+    border-color: var(--accent);
+}
+
+.login-btn {
+    width: 100%;
+    padding: .85rem;
+    background: linear-gradient(135deg, var(--accent), #4f46e5);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: .9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+    margin-top: .5rem;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, .4);
+}
+
+.login-error {
+    color: #f87171;
+    font-size: .82rem;
+    text-align: center;
+    margin-top: .8rem;
+    display: none;
+}
+
+/* ==========================================
+   DASHBOARD 
+   ========================================== */
+#dashboard {
+    display: none;
+}
+
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: rgba(10, 10, 15, .9);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    z-index: 100;
+    gap: 1rem;
+}
+
+.topbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.topbar-logo img {
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+.admin-name {
+    font-size: .85rem;
+    color: #64748b;
+    white-space: nowrap;
+}
+
+.logout-btn {
+    padding: .4rem 1rem;
+    background: rgba(239, 68, 68, .1);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, .2);
+    border-radius: 6px;
+    font-size: .8rem;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all .2s;
+    white-space: nowrap;
+}
+
+.logout-btn:hover {
+    background: rgba(239, 68, 68, .2);
+}
+
+/* Sidebar hamburger (mobile only) */
+.sidebar-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #e2e8f0;
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    flex-shrink: 0;
+}
+
+.sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    bottom: 0;
+    width: 220px;
+    background: #0d0d16;
+    border-right: 1px solid var(--border);
+    padding: 1.5rem 0;
+    overflow-y: auto;
+    z-index: 90;
+    transition: transform .25s ease;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: .75rem 1.5rem;
+    color: #64748b;
+    font-size: .88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .2s;
+    border-left: 2px solid transparent;
+}
+
+.nav-item:hover {
+    color: #e2e8f0;
+    background: rgba(99, 102, 241, .05);
+}
+
+.nav-item.active {
+    color: var(--accent);
+    background: rgba(99, 102, 241, .08);
+    border-left-color: var(--accent);
+}
+
+.nav-item .ni {
+    font-size: 1rem;
+    width: 20px;
+}
+
+.nav-section {
+    padding: .5rem 1.5rem;
+    font-size: .7rem;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    margin-top: .5rem;
+}
+
+.main {
+    margin-left: 220px;
+    padding-top: 60px;
+    min-height: 100vh;
+    transition: margin-left .25s ease;
+}
+
+.page {
+    display: none;
+    padding: 2rem;
+}
+
+.page.active {
+    display: block;
+}
+
+.page-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: .3rem;
+}
+
+.page-sub {
+    color: #64748b;
+    font-size: .85rem;
+    margin-bottom: 2rem;
+}
+
+/* Sidebar overlay backdrop (mobile only) */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    top: 60px;
+    background: rgba(0, 0, 0, .5);
+    z-index: 80;
+}
+
+.sidebar-overlay.show {
+    display: block;
+}
+
+/* ==========================================
+   STAT CARDS 
+   ========================================== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.stat-val {
+    font-size: 1.6rem;
+    font-weight: 700;
+    font-family: 'Fira Code', monospace;
+    line-height: 1;
+}
+
+.stat-lbl {
+    font-size: .75rem;
+    color: #64748b;
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ==========================================
+   TABLE 
+   ========================================== */
+.table-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: .6rem;
+}
+
+.table-title {
+    font-weight: 600;
+    font-size: .95rem;
+}
+
+.badge {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: .72rem;
+    font-weight: 600;
+}
+
+.badge-red {
+    background: rgba(239, 68, 68, .1);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, .2);
+}
+
+.badge-green {
+    background: rgba(16, 185, 129, .1);
+    color: #6ee7b7;
+    border: 1px solid rgba(16, 185, 129, .2);
+}
+
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+th {
+    padding: .85rem 1.5rem;
+    text-align: left;
+    font-size: .75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+td {
+    padding: .9rem 1.5rem;
+    font-size: .85rem;
+    border-bottom: 1px solid rgba(255, 255, 255, .03);
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover td {
+    background: rgba(255, 255, 255, .02);
+}
+
+.msg-text {
+    color: #64748b;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.read-btn {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: .75rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all .2s;
+    font-family: 'Inter', sans-serif;
+}
+
+.read-btn.unread {
+    background: rgba(99, 102, 241, .1);
+    color: var(--accent);
+    border: 1px solid rgba(99, 102, 241, .2);
+}
+
+.read-btn.read {
+    background: rgba(16, 185, 129, .1);
+    color: #6ee7b7;
+    border: 1px solid rgba(16, 185, 129, .2);
+    cursor: default;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #64748b;
+}
+
+.empty-state .ei {
+    font-size: 2.5rem;
+    margin-bottom: .8rem;
+}
+
+/* ==========================================
+   FORM INPUTS - CSS variable based (theme aware) 
+   ========================================== */
+.f-input,
+.f-textarea,
+.f-select {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 7px;
+    padding: 8px 12px;
+    color: var(--input-color);
+    font-size: .9rem;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+    transition: border-color .2s;
+}
+
+.f-input:focus,
+.f-textarea:focus {
+    border-color: var(--accent);
+}
+
+.f-textarea {
+    resize: vertical;
+}
+
+.f-label {
+    font-size: .72rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.f-group {
+    margin-bottom: .8rem;
+    min-width: 0;
+}
+
+.f-save-btn {
+    width: 100%;
+    padding: 1rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: .95rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 2rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.f-save-btn:hover {
+    background: #4f46e5;
+}
+
+.f-add-btn {
+    margin-bottom: 1.5rem;
+    padding: .6rem 1.4rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: .85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+}
+
+/* ==========================================
+   MODAL 
+   ========================================== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .7);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.modal-overlay.open {
+    display: flex;
+}
+
+.modal {
+    background: #111120;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.modal h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+}
+
+.modal-field {
+    margin-bottom: .8rem;
+}
+
+.modal-field label {
+    font-size: .72rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.modal-field p {
+    font-size: .9rem;
+    color: #e2e8f0;
+    background: #0d0d1a;
+    padding: .6rem .9rem;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    word-break: break-word;
+}
+
+.modal-msg {
+    font-size: .9rem;
+    color: #e2e8f0;
+    background: #0d0d1a;
+    padding: .8rem .9rem;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.modal-date {
+    font-size: .75rem;
+    color: #64748b;
+    margin-top: .8rem;
+}
+
+/* ==========================================
+   LOADING 
+   ========================================== */
+.loading {
+    text-align: center;
+    padding: 3rem;
+    color: #64748b;
+}
+
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 2px solid rgba(99, 102, 241, .2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==========================================
+   LIGHT MODE 
+   ========================================== */
+body.light {
+    background: #f1f5f9;
+    color: #1e293b;
+    --card: #ffffff;
+    --border: rgba(0, 0, 0, .08);
+    --input-bg: #f8fafc;
+    --input-color: #1e293b;
+    --input-border: rgba(0, 0, 0, .15);
+}
+
+body.light .topbar {
+    background: rgba(241, 245, 249, .95);
+    border-color: rgba(0, 0, 0, .08);
+}
+
+body.light .sidebar {
+    background: #e8edf5;
+    border-color: rgba(0, 0, 0, .08);
+}
+
+body.light .nav-item {
+    color: #475569;
+}
+
+body.light .nav-item:hover {
+    background: rgba(99, 102, 241, .08);
+    color: #1e293b;
+}
+
+body.light .nav-item.active {
+    color: var(--accent);
+    background: rgba(99, 102, 241, .1);
+}
+
+body.light .nav-section {
+    color: #94a3b8;
+}
+
+body.light .page-title {
+    color: #1e293b;
+}
+
+body.light .page-sub {
+    color: #64748b;
+}
+
+body.light td,
+body.light th {
+    color: #475569;
+}
+
+body.light td {
+    border-bottom-color: rgba(0, 0, 0, .04);
+}
+
+body.light tr:hover td {
+    background: rgba(0, 0, 0, .02);
+}
+
+body.light .modal {
+    background: #ffffff;
+}
+
+body.light .modal-field p,
+body.light .modal-msg {
+    background: #f1f5f9;
+    color: #1e293b;
+    border-color: rgba(0, 0, 0, .1);
+}
+
+body.light .f-label {
+    color: #475569;
+}
+
+body.light .login-card {
+    background: #ffffff;
+}
+
+body.light .stat-val {
+    color: #1e293b;
+}
+
+body.light .sidebar-toggle {
+    color: #1e293b;
+}
+
+/* Alert message for admin panal*/
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: #10b981;
+    color: #fff;
+    padding: .9rem 1.5rem;
+    border-radius: 10px;
+    font-size: .9rem;
+    font-weight: 600;
+    z-index: 9999;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all .3s;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, .3);
+    max-width: calc(100vw - 2rem);
+}
+
+.toast.error {
+    background: #ef4444;
+    box-shadow: 0 8px 24px rgba(239, 68, 68, .3);
+}
+
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .6);
+    z-index: 300;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.confirm-overlay.open {
+    display: flex;
+}
+
+.confirm-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+}
+
+.confirm-box h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: .5rem;
+}
+
+.confirm-box p {
+    color: #64748b;
+    font-size: .88rem;
+    margin-bottom: 1.5rem;
+}
+
+.confirm-btns {
+    display: flex;
+    gap: .8rem;
+    justify-content: center;
+}
+
+.confirm-btn-cancel {
+    padding: .7rem 1.5rem;
+    background: rgba(255, 255, 255, .05);
+    color: #555657;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: .88rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+}
+
+.confirm-btn-delete {
+    padding: .7rem 1.5rem;
+    background: rgba(239, 68, 68, .15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, .3);
+    border-radius: 8px;
+    font-size: .88rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+}
+
+.confirm-btn-delete:hover {
+    background: rgba(239, 68, 68, .25);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — TABLET (max 1024px)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .main {
+        margin-left: 200px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — MOBILE (max 768px)
+   Sidebar off-canvas + hamburger toggle
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .topbar {
+        padding: 0 1rem;
+    }
+
+    .topbar-logo {
+        font-size: .9rem;
+    }
+
+    .topbar-logo img {
+        height: 26px;
+    }
+
+    .admin-name {
+        display: none;
+    }
+
+    .sidebar-toggle {
+        display: block;
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+        width: 250px;
+        box-shadow: 8px 0 24px rgba(0, 0, 0, .3);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main {
+        margin-left: 0;
+        padding-top: 60px;
+    }
+
+    .page {
+        padding: 1.2rem;
+    }
+
+    .page-title {
+        font-size: 1.2rem;
+    }
+
+    .page-sub {
+        font-size: .8rem;
+        margin-bottom: 1.4rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: .7rem;
+        margin-bottom: 1.4rem;
+    }
+
+    .stat-card {
+        padding: 1rem;
+        gap: .7rem;
+    }
+
+    .stat-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 1.1rem;
+    }
+
+    .stat-val {
+        font-size: 1.25rem;
+    }
+
+    .stat-lbl {
+        font-size: .68rem;
+    }
+
+    .table-header {
+        padding: 1rem;
+    }
+
+    .table-title {
+        font-size: .88rem;
+    }
+
+    /* Tables scroll horizontally instead of getting cut off */
+    table {
+        min-width: 560px;
+    }
+
+    th,
+    td {
+        padding: .7rem 1rem;
+        font-size: .8rem;
+    }
+
+    .modal {
+        padding: 1.4rem;
+        border-radius: 14px;
+    }
+
+    .modal h3 {
+        font-size: .95rem;
+    }
+
+    /* Any inline 2-column grids inside pages become 1 column on mobile */
+    div[style*="grid-template-columns:1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    div[style*="grid-template-columns:1fr 2fr"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    .confirm-box {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stat-lbl {
+        white-space: normal;
+    }
+
+    table {
+        min-width: 480px;
+    }
+
+    .toast {
+        left: 1rem;
+        right: 1rem;
+        bottom: 1rem;
+        max-width: calc(100vw - 2rem);
+    }
+
+    .login-card {
+        padding: 1.8rem;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-page">
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="assets/logo.png" alt="RTech"/>
+      <h1>RTech Admin</h1>
+      <p>Portfolio Management Panel</p>
+    </div>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="username" placeholder="rupan"/>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="••••••••"/>
+    </div>
+    <button class="login-btn" onclick="doLogin()">Login →</button>
+    <div class="login-error" id="login-error">Wrong username or password!</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:.6rem;min-width:0">
+      <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+      <div class="topbar-logo"><img src="assets/logo.png" alt="RTech"/> Admin Panel</div>
+    </div>
+    <div class="topbar-right">
+      <span class="admin-name">Rupan Kumar Yadav</span>
+      <button id="theme-toggle" onclick="toggleTheme()" style="background:none;border:none;cursor:pointer;font-size:1.3rem;padding:4px 8px">🌙</button>
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <div class="sidebar" id="sidebar">
+    <div class="nav-section">Main</div>
+    <div class="nav-item active" onclick="showPage('overview')"><span class="ni">📊</span> Overview</div>
+    <div class="nav-item" onclick="showPage('messages')"><span class="ni">📬</span> Messages<span id="unread-badge" style="margin-left:auto;background:rgba(239,68,68,.15);color:#f87171;padding:1px 7px;border-radius:10px;font-size:.7rem;display:none"></span></div>
+    <div class="nav-item" onclick="showPage('visitors')"><span class="ni">👁️</span> Visitors</div>
+    <div class="nav-section">Portfolio</div>
+    <div class="nav-item" onclick="showPage('home')"><span class="ni">🏠</span> Home</div>
+    <div class="nav-item" onclick="showPage('about')"><span class="ni">👤</span> About</div>
+    <div class="nav-item" onclick="showPage('contact')"><span class="ni">📞</span> Contact</div>
+    <div class="nav-item" onclick="showPage('education')"><span class="ni">🎓</span> Education</div>
+    <div class="nav-item" onclick="showPage('projects')"><span class="ni">🚀</span> Projects</div>
+    <div class="nav-item" onclick="showPage('skills')"><span class="ni">⚡</span> Skills</div>
+    <div class="nav-item" onclick="showPage('achievements')"><span class="ni">🏆</span> Achievements</div>
+    <div class="nav-section">Links</div>
+    <div class="nav-item" onclick="window.open('index.html','_blank')"><span class="ni">🌐</span> View Website</div>
+  </div>
+
+  <div class="main">
+
+    <!-- OVERVIEW -->
+    <div class="page active" id="page-overview">
+      <div class="page-title">Dashboard Overview</div>
+      <div class="page-sub">RTech Portfolio — Real-time stats</div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon" style="background:rgba(99,102,241,.1)">👁️</div><div><div class="stat-val" id="ov-visitors">-</div><div class="stat-lbl">Total Visitors</div></div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:rgba(239,68,68,.1)">📬</div><div><div class="stat-val" id="ov-unread">-</div><div class="stat-lbl">Unread Messages</div></div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:rgba(16,185,129,.1)">❤️</div><div><div class="stat-val" id="ov-likes">-</div><div class="stat-lbl">Total Likes</div></div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:rgba(245,158,11,.1)">🚀</div><div><div class="stat-val" id="ov-projects">-</div><div class="stat-lbl">Projects</div></div></div>
+      </div>
+      <div class="table-card">
+        <div class="table-header"><div class="table-title">Project Stats</div></div>
+        <div class="table-scroll">
+        <table><thead><tr><th>Project</th><th>Views</th><th>Likes</th></tr></thead>
+        <tbody id="proj-stats-body"><tr><td colspan="3"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="page" id="page-messages">
+      <div class="page-title">Contact Messages</div>
+      <div class="page-sub">Messages received from your portfolio</div>
+      <div class="table-card">
+        <div class="table-header">
+        <div class="table-title">All Messages</div>
+        <div style="display:flex;align-items:center;gap:.8rem">
+        <button id="delete-selected-btn" onclick="deleteSelected()" style="display:none;padding:.5rem 1rem;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">🗑 Delete Selected</button>
+       <span id="msg-count" class="badge badge-red">0 unread</span>
+     </div>
+    </div>
+        <div class="table-scroll">
+        <table><thead><tr><th><input type="checkbox" id="select-all" onclick="toggleSelectAll(this)"/></th><th>Name</th><th>Email</th><th>Subject</th><th>Message</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody id="messages-body"><tr><td colspan="6"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody></table>
+        </div>
+       </div>
+    </div>
+
+    <!-- VISITORS -->
+    <div class="page" id="page-visitors">
+      <div class="page-title">Visitor Analytics</div>
+      <div class="page-sub">Page-wise visitor breakdown</div>
+      <div class="stats-grid" id="visitor-pages"></div>
+    </div>
+
+    <!-- HOME -->
+    <div class="page" id="page-home">
+      <div class="page-title">Home Page</div>
+      <div class="page-sub">Update the Photo, Resume, and Hero section data.</div>
+
+      <div class="table-card" style="margin-bottom:1.5rem">
+        <div class="table-header"><div class="table-title">📸 Profile Photo</div></div>
+        <div style="padding:1.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
+          <div id="profile-photo-preview" style="width:80px;height:80px;border-radius:12px;background:var(--input-bg);border:2px dashed var(--input-border);display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:2rem;flex-shrink:0">📷</div>
+          <div>
+            <input type="file" id="photo-file" accept="image/*" style="display:none" onchange="uploadPhoto(this)"/>
+            <button onclick="document.getElementById('photo-file').click()" class="f-add-btn" style="margin:0">+ Upload Photo</button>
+            <div style="color:#64748b;font-size:.78rem;margin-top:.5rem">JPG / PNG — changes will be reflected on the homepage.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-card" style="margin-bottom:1.5rem">
+        <div class="table-header"><div class="table-title">📄 Resume (PDF)</div></div>
+        <div style="padding:1.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
+          <input type="file" id="resume-file" accept="application/pdf" style="display:none" onchange="uploadResume(this)"/>
+          <button onclick="document.getElementById('resume-file').click()" class="f-add-btn" style="margin:0">+ Upload Resume</button>
+          <span id="resume-status" style="color:#64748b;font-size:.85rem">Loading...</span>
+        </div>
+      </div>
+
+      <div class="table-card" style="margin-bottom:1.5rem">
+        <div class="table-header"><div class="table-title">👤 Basic Info</div></div>
+        <div style="padding:1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div class="f-group"><label class="f-label">Full Name</label><input class="f-input" id="p-name"/></div>
+          <div class="f-group"><label class="f-label">Available for Opportunities?</label>
+            <select class="f-select" id="p-available">
+              <option value="true">Yes — Available</option>
+              <option value="false">No — Not Available</option>
+            </select>
+          </div>
+          <div class="f-group" style="grid-column:1/-1"><label class="f-label">Role / Title</label><input class="f-input" id="p-role"/></div>
+          <div class="f-group" style="grid-column:1/-1"><label class="f-label">Tagline (Hero Description)</label><textarea class="f-textarea" id="p-tagline" rows="2"></textarea></div>
+        </div>
+      </div>
+
+      <div class="table-card" style="margin-bottom:1.5rem">
+        <div class="table-header"><div class="table-title">📊 Hero Stats</div></div>
+        <div style="padding:1.5rem;display:grid;grid-template-columns:1fr 2fr;gap:1rem">
+          <div class="f-group"><label class="f-label">Stat 1 Number</label><input class="f-input" id="p-stat1-num" placeholder="2+"/></div>
+          <div class="f-group"><label class="f-label">Stat 1 Label</label><input class="f-input" id="p-stat1-lbl" placeholder="Years Learning"/></div>
+          <div class="f-group"><label class="f-label">Stat 2 Number</label><input class="f-input" id="p-stat2-num" placeholder="10+"/></div>
+          <div class="f-group"><label class="f-label">Stat 2 Label</label><input class="f-input" id="p-stat2-lbl" placeholder="Projects Built"/></div>
+          <div class="f-group"><label class="f-label">Stat 3 Number</label><input class="f-input" id="p-stat3-num" placeholder="5+"/></div>
+          <div class="f-group"><label class="f-label">Stat 3 Label</label><input class="f-input" id="p-stat3-lbl" placeholder="Technologies"/></div>
+        </div>
+      </div>
+
+      <div class="table-card" style="margin-bottom:1.5rem">
+        <div class="table-header"><div class="table-title">⌨️ Typing Roles (one role per line)</div></div>
+        <div style="padding:1.5rem">
+          <textarea class="f-textarea" id="p-roles" rows="4" placeholder="Full Stack Developer&#10;Java Backend Developer&#10;Web Developer" style="font-family:'Fira Code',monospace"></textarea>
+        </div>
+      </div>
+
+      <button class="f-save-btn" onclick="saveProfile()">💾 Save Home Changes</button>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="page" id="page-about">
+      <div class="page-title">About Page</div>
+      <div class="page-sub">Update the bio paragraphs and information grid.</div>
+
+      <div class="table-card" style="margin-bottom:1.5rem">
+        <div class="table-header"><div class="table-title">📝 About Paragraphs</div></div>
+        <div style="padding:1.5rem">
+          <textarea class="f-textarea" id="p-about" rows="8" placeholder="Pehla paragraph...&#10;&#10;Dusra paragraph...&#10;&#10;Teesra paragraph..."></textarea>
+          <div style="color:#64748b;font-size:.78rem;margin-top:.6rem">💡 Leave one blank line between paragraphs. &nbsp;|&nbsp; Bold: <code style="background:var(--input-bg);padding:1px 5px;border-radius:3px;font-size:.75rem">&lt;strong&gt;text&lt;/strong&gt;</code></div>
+        </div>
+      </div>
+
+      <div class="table-card" style="margin-bottom:1.5rem">
+        <div class="table-header"><div class="table-title">ℹ️ About Info Grid</div></div>
+        <div style="padding:1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div class="f-group"><label class="f-label">Location</label><input class="f-input" id="p-location"/></div>
+           <div class="f-group"><label class="f-label">Brand</label><input class="f-input" id="p-brand"/></div>
+          <div class="f-group"><label class="f-label">Degree</label><input class="f-input" id="p-degree"/></div>
+          <div class="f-group"><label class="f-label">Email</label><input class="f-input" id="p-email" placeholder="you@email.com"/></div>
+          <div class="f-group"><label class="f-label">GitHub (without https://)</label><input class="f-input" id="p-github" placeholder="github.com/username"/></div>
+          <div class="f-group"><label class="f-label">Status</label><input class="f-input" id="p-status" placeholder="Available"/></div>
+          
+        </div>
+        <div style="padding:0 1.5rem 1rem;color:#64748b;font-size:.78rem">📌 Education Timeline — edit it from the "Education" section in the sidebar.</div>
+      </div>
+
+      <button class="f-save-btn" onclick="saveProfile()">💾 Save About Changes</button>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="page" id="page-contact">
+      <div class="page-title">Contact Page</div>
+      <div class="page-sub">Update the contact details.</div>
+
+      <div class="table-card" style="margin-bottom:1.5rem">
+        <div class="table-header"><div class="table-title">📞 Contact Details</div></div>
+        <div style="padding:1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div class="f-group"><label class="f-label">Email</label><input class="f-input" id="p-email" placeholder="you@email.com"/></div>
+          <div class="f-group"><label class="f-label">Phone</label><input class="f-input" id="p-phone" placeholder="+91 99999 99999"/></div>
+          <div class="f-group"><label class="f-label">GitHub (without https://)</label><input class="f-input" id="p-github" placeholder="github.com/username"/></div>
+          <div class="f-group"><label class="f-label">LinkedIn (without https://)</label><input class="f-input" id="p-linkedin" placeholder="linkedin.com/in/username"/></div>
+        </div>
+        <div style="padding:0 1.5rem 1rem;color:#64748b;font-size:.78rem">📌 Contact Messages — view them from the "Messages" section in the sidebar.</div>
+      </div>
+
+      <button class="f-save-btn" onclick="saveProfile()">💾 Save Contact Changes</button>
+    </div>
+
+    <!-- EDUCATION -->
+    <div class="page" id="page-education">
+      <div class="page-title">Education</div>
+      <div class="page-sub">Add, edit or delete your education</div>
+      <button class="f-add-btn" onclick="openEduModal(null)">+ Add Education</button>
+      <div class="table-card">
+        <div class="table-header"><div class="table-title">All Education</div></div>
+        <div class="table-scroll">
+        <table><thead><tr><th>Year</th><th>Degree</th><th>School</th><th>Actions</th></tr></thead>
+        <tbody id="education-body"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="page" id="page-projects">
+      <div class="page-title">Projects</div>
+      <div class="page-sub">Add, edit or delete your projects</div>
+      <button class="f-add-btn" onclick="openProjectModal(null)">+ Add Project</button>
+      <div class="table-card">
+        <div class="table-header"><div class="table-title">All Projects</div></div>
+        <div class="table-scroll">
+        <table><thead><tr><th>Emoji</th><th>Title</th><th>Tech</th><th>GitHub</th><th>Demo</th><th>Actions</th></tr></thead>
+        <tbody id="projects-body"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKILLS -->
+    <div class="page" id="page-skills">
+      <div class="page-title">Skills</div>
+      <div class="page-sub">Add, edit or delete your skills</div>
+      <button class="f-add-btn" onclick="openSkillModal(null)">+ Add Skill</button>
+      <div class="table-card">
+        <div class="table-header"><div class="table-title">All Skills</div></div>
+        <div class="table-scroll">
+        <table><thead><tr><th>Icon</th><th>Name</th><th>Color</th><th>Tags</th><th>Actions</th></tr></thead>
+        <tbody id="skills-body"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACHIEVEMENTS -->
+    <div class="page" id="page-achievements">
+      <div class="page-title">Achievements</div>
+      <div class="page-sub">Add, edit or delete your achievements</div>
+      <button class="f-add-btn" onclick="openAchieveModal(null)">+ Add Achievement</button>
+      <div class="table-card">
+        <div class="table-header"><div class="table-title">All Achievements</div></div>
+        <div class="table-scroll">
+        <table><thead><tr><th>Icon</th><th>Title</th><th>Issuer</th><th>Year</th><th>Actions</th></tr></thead>
+        <tbody id="achievements-body"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Project Modal -->
+<div class="modal-overlay" id="proj-modal">
+  <div class="modal" style="max-width:600px">
+    <button class="modal-close" onclick="document.getElementById('proj-modal').classList.remove('open')">✕</button>
+    <h3 id="proj-modal-title">Add Project</h3>
+    <input type="hidden" id="proj-id"/>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:1rem">
+      <div class="f-group"><label class="f-label">Emoji</label><input class="f-input" id="proj-emoji" placeholder="🛒"/></div>
+      <div class="f-group"><label class="f-label">Banner Color</label>
+        <select class="f-select" id="proj-banner">
+          <option value="blue">Blue</option><option value="teal">Teal</option><option value="purple">Purple</option><option value="red">Red</option><option value="green">Green</option><option value="orange">Orange</option>
+        </select>
+      </div>
+    </div>
+    <div class="f-group"><label class="f-label">Title</label><input class="f-input" id="proj-title" placeholder="E-Commerce Platform"/></div>
+    <div class="f-group"><label class="f-label">Description</label><textarea class="f-textarea" id="proj-desc" rows="3" placeholder="Project description..."></textarea></div>
+    <div class="f-group"><label class="f-label">Tech Stack (comma separated)</label><input class="f-input" id="proj-tech" placeholder="Java, Spring Boot, MySQL"/></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem">
+      <div class="f-group"><label class="f-label">GitHub URL</label><input class="f-input" id="proj-github" placeholder="https://github.com/..."/></div>
+      <div class="f-group"><label class="f-label">Demo URL</label><input class="f-input" id="proj-demo" placeholder="https://..."/></div>
+    </div>
+    <button onclick="saveProject()" style="width:100%;margin-top:1rem;padding:.8rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Save Project</button>
+  </div>
+</div>
+
+<!-- Skill Modal -->
+<div class="modal-overlay" id="skill-modal">
+  <div class="modal" style="max-width:500px">
+    <button class="modal-close" onclick="document.getElementById('skill-modal').classList.remove('open')">✕</button>
+    <h3 id="skill-modal-title">Add Skill</h3>
+    <input type="hidden" id="skill-id"/>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:1rem">
+      <div class="f-group"><label class="f-label">Icon</label><input class="f-input" id="skill-icon" placeholder="☕"/></div>
+      <div class="f-group"><label class="f-label">Color</label>
+        <select class="f-select" id="skill-color">
+          <option value="purple">Purple</option><option value="cyan">Cyan</option><option value="green">Green</option><option value="orange">Orange</option>
+        </select>
+      </div>
+    </div>
+    <div class="f-group"><label class="f-label">Name</label><input class="f-input" id="skill-name" placeholder="Backend"/></div>
+    <div class="f-group"><label class="f-label">Tags (comma separated)</label><input class="f-input" id="skill-tags" placeholder="Java, Spring Boot, REST API"/></div>
+    <button onclick="saveSkill()" style="width:100%;margin-top:1rem;padding:.8rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Save Skill</button>
+  </div>
+</div>
+
+<!-- Achievement Modal -->
+<div class="modal-overlay" id="achieve-modal">
+  <div class="modal" style="max-width:500px">
+    <button class="modal-close" onclick="document.getElementById('achieve-modal').classList.remove('open')">✕</button>
+    <h3 id="achieve-modal-title">Add Achievement</h3>
+    <input type="hidden" id="achieve-id"/>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:1rem">
+      <div class="f-group"><label class="f-label">Icon</label><input class="f-input" id="achieve-icon" placeholder="🏆"/></div>
+      <div class="f-group"><label class="f-label">Year</label><input class="f-input" id="achieve-year" placeholder="2024"/></div>
+    </div>
+    <div class="f-group"><label class="f-label">Title</label><input class="f-input" id="achieve-title" placeholder="Java Full Stack Development"/></div>
+    <div class="f-group"><label class="f-label">Issuer</label><input class="f-input" id="achieve-issuer" placeholder="Udemy / Coursera"/></div>
+    <div class="f-group"><label class="f-label">Certificate Link</label><input class="f-input" id="achieve-link" placeholder="https://..."/></div>
+    <button onclick="saveAchievement()" style="width:100%;margin-top:1rem;padding:.8rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Save Achievement</button>
+  </div>
+</div>
+
+<!-- Education Modal -->
+<div class="modal-overlay" id="edu-modal">
+  <div class="modal" style="max-width:500px">
+    <button class="modal-close" onclick="document.getElementById('edu-modal').classList.remove('open')">✕</button>
+    <h3 id="edu-modal-title">Add Education</h3>
+    <input type="hidden" id="edu-id"/>
+    <div class="f-group" style="margin-top:1rem"><label class="f-label">Year Range</label><input class="f-input" id="edu-year" placeholder="2021 – 2025"/></div>
+    <div class="f-group"><label class="f-label">Degree</label><input class="f-input" id="edu-degree" placeholder="B.Tech — Computer Science"/></div>
+    <div class="f-group"><label class="f-label">School / University</label><input class="f-input" id="edu-school" placeholder="Jagannath University"/></div>
+    <button onclick="saveEducation()" style="width:100%;margin-top:1rem;padding:.8rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Save Education</button>
+  </div>
+</div>
+
+<!-- Message Modal -->
+<div class="modal-overlay" id="msg-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('msg-modal').classList.remove('open')">✕</button>
+    <h3>Message Details</h3>
+    <div class="modal-field"><label>Name</label><p id="m-name"></p></div>
+    <div class="modal-field"><label>Email</label><p id="m-email"></p></div>
+    <div class="modal-field"><label>Subject</label><p id="m-subject"></p></div>
+    <div class="modal-field"><label>Message</label><div class="modal-msg" id="m-message"></div></div>
+    <div class="modal-date" id="m-date"></div>
+  </div>
+</div>
+
+<div class="confirm-overlay" id="confirm-modal">
+  <div class="confirm-box">
+    <h3>🗑️ Delete Message</h3>
+    <p>Are you sure you want to delete this message? This action cannot be undone.</p>
+    <div class="confirm-btns">
+      <button class="confirm-btn-cancel" onclick="document.getElementById('confirm-modal').classList.remove('open')">Cancel</button>
+      <button class="confirm-btn-delete" id="confirm-delete-btn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:8080/api';
+
+function doLogin() {
+  const u = document.getElementById('username').value.trim();
+  const p = document.getElementById('password').value.trim();
+  if (u === 'rupan' && p === 'Rupan@123') {
+    sessionStorage.setItem('admin','true');
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadAll();
+  } else { document.getElementById('login-error').style.display = 'block'; }
+}
+function doLogout() {
+  sessionStorage.removeItem('admin');
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('login-page').style.display = 'flex';
+}
+document.getElementById('password').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+if (sessionStorage.getItem('admin')) {
+  document.getElementById('login-page').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  loadAll();
+}
+
+/* ── MOBILE SIDEBAR TOGGLE ─────────────────────────────── */
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('show');
+}
+function closeSidebarOnMobile() {
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('show');
+  }
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  const loaders = { messages: loadMessages, visitors: loadVisitors, projects: loadPortfolioProjects, skills: loadSkills, achievements: loadAchievements, education: loadEducation };
+  if (loaders[name]) loaders[name]();
+  if (['home','about','contact'].includes(name)) loadProfile();
+  closeSidebarOnMobile();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function loadAll() { loadOverview(); loadMessages(); }
+
+async function loadOverview() {
+  try {
+    const [vRes,mRes,pRes] = await Promise.all([fetch(`${API}/analytics/visitors`),fetch(`${API}/contact/unread`),fetch(`${API}/analytics/projects`)]);
+    const v=await vRes.json(), m=await mRes.json(), p=await pRes.json();
+    document.getElementById('ov-visitors').textContent = v.total||0;
+    document.getElementById('ov-unread').textContent   = m.count||0;
+    document.getElementById('ov-projects').textContent = p.length||0;
+    document.getElementById('ov-likes').textContent    = p.reduce((s,x)=>s+(x.likeCount||0),0);
+    if(m.count>0){const b=document.getElementById('unread-badge');b.textContent=m.count;b.style.display='inline';}
+    document.getElementById('proj-stats-body').innerHTML = p.length
+      ? p.map(x=>`<tr><td>${x.projectName}</td><td>👁 ${x.viewCount||0}</td><td>❤ ${x.likeCount||0}</td></tr>`).join('')
+      : '<tr><td colspan="3"><div class="empty-state"><div class="ei">🚀</div>No data yet</div></td></tr>';
+  } catch(e) { ['ov-visitors','ov-unread','ov-likes','ov-projects'].forEach(id=>document.getElementById(id).textContent='—'); }
+}
+
+async function loadMessages() {
+  try {
+    const msgs = await (await fetch(`${API}/contact`)).json();
+    const unread = msgs.filter(m=>!m.isRead).length;
+    document.getElementById('msg-count').textContent = unread+' unread';
+    document.getElementById('msg-count').className = unread>0?'badge badge-red':'badge badge-green';
+    document.getElementById('messages-body').innerHTML = msgs.length
+      ? msgs.map(m=>`<tr onclick="openMsg(${JSON.stringify(m).replace(/"/g,'&quot;')})" style="cursor:pointer">
+          <td onclick="event.stopPropagation()"><input type="checkbox" class="msg-cb" value="${m.id}" onchange="updateDeleteBtn()"/></td>
+          <td><strong>${m.name}</strong></td>
+          <td style="color:#64748b">${m.email}</td>
+          <td>${m.subject||'—'}</td>
+          <td class="msg-text">${m.message}</td>
+          <td style="color:#64748b;font-size:.78rem">${new Date(m.createdAt).toLocaleDateString('en-IN')}</td>
+          <td style="display:flex;gap:6px">
+            <span class="read-btn ${m.isRead?'read':'unread'}" onclick="event.stopPropagation();markRead(${m.id},this)">${m.isRead?'✅ Read':'🔵 Unread'}</span>
+            <button onclick="event.stopPropagation();replyMsg('${m.email}','${m.subject}')" style="padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid rgba(6,182,212,.3);background:rgba(6,182,212,.1);color:#67e8f9;font-family:'Inter',sans-serif">↩ Reply</button>
+            <button onclick="event.stopPropagation();deleteMsg(${m.id})" style="padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.1);color:#f87171;font-family:'Inter',sans-serif">🗑 Del</button>
+          </td>
+        </tr>`).join('')
+      : '<tr><td colspan="7"><div class="empty-state"><div class="ei">📭</div>No messages yet</div></td></tr>';
+  } catch(e) { document.getElementById('messages-body').innerHTML='<tr><td colspan="7" style="text-align:center;color:#64748b;padding:2rem">Backend offline</td></tr>'; }
+}
+async function markRead(id,btn){try{await fetch(`${API}/contact/${id}/read`,{method:'PUT'});btn.className='read-btn read';btn.textContent='✅ Read';loadOverview();}catch(e){}}
+function openMsg(m){
+  document.getElementById('m-name').textContent=m.name;
+  document.getElementById('m-email').textContent=m.email;
+  document.getElementById('m-subject').textContent=m.subject||'—';
+  document.getElementById('m-message').textContent=m.message;
+  document.getElementById('m-date').textContent='📅 '+new Date(m.createdAt).toLocaleString('en-IN');
+  document.getElementById('msg-modal').classList.add('open');
+}
+
+async function loadVisitors(){
+  try{
+    const data=await(await fetch(`${API}/analytics/visitors`)).json();
+    const pages=data.byPage||{};
+    const colors={home:'rgba(99,102,241,.1)',about:'rgba(6,182,212,.1)',skills:'rgba(16,185,129,.1)',projects:'rgba(245,158,11,.1)',achievements:'rgba(244,114,182,.1)',contact:'rgba(239,68,68,.1)'};
+    const icons={home:'🏠',about:'👤',skills:'⚡',projects:'🚀',achievements:'🏆',contact:'📬'};
+    document.getElementById('visitor-pages').innerHTML=Object.entries(pages).map(([page,count])=>`
+      <div class="stat-card"><div class="stat-icon" style="background:${colors[page]||'rgba(99,102,241,.1)'}">${icons[page]||'📄'}</div>
+      <div><div class="stat-val">${count}</div><div class="stat-lbl">${page.charAt(0).toUpperCase()+page.slice(1)} visits</div></div></div>`).join('');
+  }catch(e){document.getElementById('visitor-pages').innerHTML='<div style="color:#64748b">Backend offline</div>';}
+}
+
+async function loadPortfolioProjects(){
+  try{
+    const data=await(await fetch(`${API}/portfolio/projects`)).json();
+    document.getElementById('projects-body').innerHTML=data.length
+      ?data.map(p=>`<tr><td>${p.emoji||'🚀'}</td><td><strong>${p.title}</strong></td>
+        <td style="color:#64748b;font-size:.8rem">${p.techStack||'—'}</td>
+        <td><a href="${p.githubUrl||'#'}" target="_blank" style="color:var(--accent);font-size:.8rem">GitHub</a></td>
+        <td><a href="${p.demoUrl||'#'}" target="_blank" style="color:var(--cyan);font-size:.8rem">Demo</a></td>
+        <td style="display:flex;gap:6px">
+          <button onclick="openProjectModal(${JSON.stringify(p).replace(/"/g,'&quot;')})" style="padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid rgba(99,102,241,.3);background:rgba(99,102,241,.1);color:#a5b4fc;font-family:'Inter',sans-serif">✏ Edit</button>
+          <button onclick="deleteProject(${p.id})" style="padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.1);color:#f87171;font-family:'Inter',sans-serif">🗑 Del</button>
+        </td></tr>`).join('')
+      :'<tr><td colspan="6"><div class="empty-state"><div class="ei">🚀</div>No projects yet</div></td></tr>';
+  }catch(e){}
+}
+function openProjectModal(p){
+  document.getElementById('proj-modal-title').textContent=p?'Edit Project':'Add Project';
+  document.getElementById('proj-id').value=p?p.id:'';
+  document.getElementById('proj-emoji').value=p?p.emoji||'':'';
+  document.getElementById('proj-banner').value=p?p.banner||'blue':'blue';
+  document.getElementById('proj-title').value=p?p.title:'';
+  document.getElementById('proj-desc').value=p?p.description||'':'';
+  document.getElementById('proj-tech').value=p?p.techStack||'':'';
+  document.getElementById('proj-github').value=p?p.githubUrl||'':'';
+  document.getElementById('proj-demo').value=p?p.demoUrl||'':'';
+  document.getElementById('proj-modal').classList.add('open');
+}
+async function saveProject(){
+  const id=document.getElementById('proj-id').value;
+  const body={emoji:document.getElementById('proj-emoji').value,banner:document.getElementById('proj-banner').value,title:document.getElementById('proj-title').value,description:document.getElementById('proj-desc').value,techStack:document.getElementById('proj-tech').value,githubUrl:document.getElementById('proj-github').value,demoUrl:document.getElementById('proj-demo').value,isActive:true};
+  await fetch(id?`${API}/portfolio/projects/${id}`:`${API}/portfolio/projects`,{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  document.getElementById('proj-modal').classList.remove('open');
+  loadPortfolioProjects();
+}
+async function deleteProject(id){if(!confirm('Delete?'))return;await fetch(`${API}/portfolio/projects/${id}`,{method:'DELETE'});loadPortfolioProjects();}
+
+async function loadSkills(){
+  try{
+    const data=await(await fetch(`${API}/portfolio/skills`)).json();
+    document.getElementById('skills-body').innerHTML=data.length
+      ?data.map(s=>`<tr><td>${s.icon||'⚡'}</td><td><strong>${s.name}</strong></td>
+        <td><span style="padding:2px 8px;border-radius:4px;font-size:.72rem;background:rgba(99,102,241,.1);color:#a5b4fc">${s.color}</span></td>
+        <td style="color:#64748b;font-size:.8rem">${s.tags||'—'}</td>
+        <td style="display:flex;gap:6px">
+          <button onclick="openSkillModal(${JSON.stringify(s).replace(/"/g,'&quot;')})" style="padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid rgba(99,102,241,.3);background:rgba(99,102,241,.1);color:#a5b4fc;font-family:'Inter',sans-serif">✏ Edit</button>
+          <button onclick="deleteSkill(${s.id})" style="padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.1);color:#f87171;font-family:'Inter',sans-serif">🗑 Del</button>
+        </td></tr>`).join('')
+      :'<tr><td colspan="5"><div class="empty-state"><div class="ei">⚡</div>No skills yet</div></td></tr>';
+  }catch(e){}
+}
+function openSkillModal(s){
+  document.getElementById('skill-modal-title').textContent=s?'Edit Skill':'Add Skill';
+  document.getElementById('skill-id').value=s?s.id:'';
+  document.getElementById('skill-icon').value=s?s.icon||'':'';
+  document.getElementById('skill-name').value=s?s.name:'';
+  document.getElementById('skill-color').value=s?s.color||'purple':'purple';
+  document.getElementById('skill-tags').value=s?s.tags||'':'';
+  document.getElementById('skill-modal').classList.add('open');
+}
+async function saveSkill(){
+  const id=document.getElementById('skill-id').value;
+  const body={icon:document.getElementById('skill-icon').value,name:document.getElementById('skill-name').value,color:document.getElementById('skill-color').value,tags:document.getElementById('skill-tags').value};
+  await fetch(id?`${API}/portfolio/skills/${id}`:`${API}/portfolio/skills`,{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  document.getElementById('skill-modal').classList.remove('open');
+  loadSkills();
+}
+async function deleteSkill(id){if(!confirm('Delete?'))return;await fetch(`${API}/portfolio/skills/${id}`,{method:'DELETE'});loadSkills();}
+
+async function loadAchievements(){
+  try{
+    const data=await(await fetch(`${API}/portfolio/achievements`)).json();
+    document.getElementById('achievements-body').innerHTML=data.length
+      ?data.map(a=>`<tr><td>${a.icon||'🏆'}</td><td><strong>${a.title}</strong></td>
+        <td style="color:#64748b">${a.issuer||'—'}</td>
+        <td style="color:var(--accent);font-family:'Fira Code',monospace;font-size:.8rem">${a.dateYear||'—'}</td>
+        <td style="display:flex;gap:6px">
+          <button onclick="openAchieveModal(${JSON.stringify(a).replace(/"/g,'&quot;')})" style="padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid rgba(99,102,241,.3);background:rgba(99,102,241,.1);color:#a5b4fc;font-family:'Inter',sans-serif">✏ Edit</button>
+          <button onclick="deleteAchievement(${a.id})" style="padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.1);color:#f87171;font-family:'Inter',sans-serif">🗑 Del</button>
+        </td></tr>`).join('')
+      :'<tr><td colspan="5"><div class="empty-state"><div class="ei">🏆</div>No achievements yet</div></td></tr>';
+  }catch(e){}
+}
+function openAchieveModal(a){
+  document.getElementById('achieve-modal-title').textContent=a?'Edit Achievement':'Add Achievement';
+  document.getElementById('achieve-id').value=a?a.id:'';
+  document.getElementById('achieve-icon').value=a?a.icon||'':'';
+  document.getElementById('achieve-title').value=a?a.title:'';
+  document.getElementById('achieve-issuer').value=a?a.issuer||'':'';
+  document.getElementById('achieve-year').value=a?a.dateYear||'':'';
+  document.getElementById('achieve-link').value=a?a.link||'':'';
+  document.getElementById('achieve-modal').classList.add('open');
+}
+async function saveAchievement(){
+  const id=document.getElementById('achieve-id').value;
+  const body={icon:document.getElementById('achieve-icon').value,title:document.getElementById('achieve-title').value,issuer:document.getElementById('achieve-issuer').value,dateYear:document.getElementById('achieve-year').value,link:document.getElementById('achieve-link').value,color:'purple'};
+  await fetch(id?`${API}/portfolio/achievements/${id}`:`${API}/portfolio/achievements`,{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  document.getElementById('achieve-modal').classList.remove('open');
+  loadAchievements();
+}
+async function deleteAchievement(id){if(!confirm('Delete?'))return;await fetch(`${API}/portfolio/achievements/${id}`,{method:'DELETE'});loadAchievements();}
+
+async function loadEducation(){
+  try{
+    const data=await(await fetch(`${API}/portfolio/education`)).json();
+    document.getElementById('education-body').innerHTML=data.length
+      ?data.map(e=>`<tr>
+        <td style="color:var(--cyan);font-family:'Fira Code',monospace;font-size:.8rem">${e.yearRange||'—'}</td>
+        <td><strong>${e.degree||'—'}</strong></td><td style="color:#64748b">${e.school||'—'}</td>
+        <td style="display:flex;gap:6px">
+          <button onclick="openEduModal(${JSON.stringify(e).replace(/"/g,'&quot;')})" style="padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid rgba(99,102,241,.3);background:rgba(99,102,241,.1);color:#a5b4fc;font-family:'Inter',sans-serif">✏ Edit</button>
+          <button onclick="deleteEducation(${e.id})" style="padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.1);color:#f87171;font-family:'Inter',sans-serif">🗑 Del</button>
+        </td></tr>`).join('')
+      :'<tr><td colspan="4"><div class="empty-state"><div class="ei">🎓</div>No education yet</div></td></tr>';
+  }catch(e){}
+}
+function openEduModal(e){
+  document.getElementById('edu-modal-title').textContent=e?'Edit Education':'Add Education';
+  document.getElementById('edu-id').value=e?e.id:'';
+  document.getElementById('edu-year').value=e?e.yearRange||'':'';
+  document.getElementById('edu-degree').value=e?e.degree||'':'';
+  document.getElementById('edu-school').value=e?e.school||'':'';
+  document.getElementById('edu-modal').classList.add('open');
+}
+async function saveEducation(){
+  const id=document.getElementById('edu-id').value;
+  const body={yearRange:document.getElementById('edu-year').value,degree:document.getElementById('edu-degree').value,school:document.getElementById('edu-school').value};
+  await fetch(id?`${API}/portfolio/education/${id}`:`${API}/portfolio/education`,{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  document.getElementById('edu-modal').classList.remove('open');
+  loadEducation();
+}
+async function deleteEducation(id){if(!confirm('Delete?'))return;await fetch(`${API}/portfolio/education/${id}`,{method:'DELETE'});loadEducation();}
+
+async function loadProfile(){
+  try{
+    const data=await(await fetch(`${API}/portfolio/profile`)).json();
+    const set=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||'';};
+    set('p-name',data.name);set('p-brand',data.brand);set('p-role',data.role);set('p-tagline',data.tagline);
+    set('p-email',data.email);set('p-phone',data.phone);set('p-github',data.github);set('p-linkedin',data.linkedin);
+    set('p-location',data.location);set('p-degree',data.degree);set('p-status',data.status);
+    const av=document.getElementById('p-available');if(av)av.value=data.available||'true';
+    if(data.stats){try{JSON.parse(data.stats).forEach((s,i)=>{set(`p-stat${i+1}-num`,s.number);set(`p-stat${i+1}-lbl`,s.label);});}catch(e){}}
+    if(data.roles){try{const el=document.getElementById('p-roles');if(el)el.value=JSON.parse(data.roles).join('\n');}catch(e){}}
+    if(data.about){try{const el=document.getElementById('p-about');if(el)el.value=JSON.parse(data.about).join('\n\n');}catch(e){}}
+    const pp=document.getElementById('profile-photo-preview');
+    if(pp)pp.innerHTML=data.photo?`<img src="${data.photo}?t=${Date.now()}" style="width:100%;height:100%;object-fit:cover">`:'📷';
+    const rs=document.getElementById('resume-status');
+    if(rs)rs.textContent=data.resume?'✅ Resume uploaded — '+data.resume:'⚠️ No resume uploaded yet';
+  }catch(e){const rs=document.getElementById('resume-status');if(rs)rs.textContent='Backend offline';}
+}
+
+async function saveProfile(){
+  const get=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
+  const stats=[1,2,3].map(i=>({number:get(`p-stat${i}-num`),label:get(`p-stat${i}-lbl`)}));
+  const rolesEl=document.getElementById('p-roles');
+  const aboutEl=document.getElementById('p-about');
+  const roles=rolesEl?rolesEl.value.split('\n').map(r=>r.trim()).filter(r=>r):[];
+  const about=aboutEl?aboutEl.value.split(/\n\s*\n/).map(a=>a.trim()).filter(a=>a):[];
+  const body={name:get('p-name'),brand:get('p-brand'),role:get('p-role'),tagline:get('p-tagline'),email:get('p-email'),phone:get('p-phone'),github:get('p-github'),linkedin:get('p-linkedin'),location:get('p-location'),degree:get('p-degree'),status:get('p-status'),available:get('p-available'),stats:JSON.stringify(stats),roles:JSON.stringify(roles),about:JSON.stringify(about)};
+  try{
+    await fetch(`${API}/portfolio/profile`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    showToast('✅ Changes saved successfully! Refresh website to see updates.');
+  }catch(e){showToast('❌ Failed to save! Please check backend.',true);}
+}
+
+async function uploadPhoto(input){
+  if(!input.files||!input.files[0])return;
+  const fd=new FormData();fd.append('file',input.files[0]);
+  try{
+    const data=await(await fetch(`${API}/portfolio/upload-photo`,{method:'POST',body:fd})).json();
+    if(data.path){document.getElementById('profile-photo-preview').innerHTML=`<img src="${data.path}?t=${Date.now()}" style="width:100%;height:100%;object-fit:cover">`;alert('Photo uploaded successfully ');}
+    else alert('Upload fail: '+(data.error||'Unknown'));
+  }catch(e){alert('Upload fail. Backend offline?');}
+}
+
+async function uploadResume(input){
+  if(!input.files||!input.files[0])return;
+  const fd=new FormData();fd.append('file',input.files[0]);
+  try{
+    const data=await(await fetch(`${API}/portfolio/upload-resume`,{method:'POST',body:fd})).json();
+    if(data.path){document.getElementById('resume-status').textContent='✅ Resume uploaded — '+data.path;alert('Resume uploaded successfully!');}
+    else alert('Upload fail: '+(data.error||'Unknown'));
+  }catch(e){alert('Upload fail. Backend offline?');}
+}
+
+function toggleTheme(){
+  const body=document.body,btn=document.getElementById('theme-toggle');
+  body.classList.toggle('light');
+  const isLight=body.classList.contains('light');
+  btn.textContent=isLight?'☀️':'🌙';
+  localStorage.setItem('admin-theme',isLight?'light':'dark');
+}
+if(localStorage.getItem('admin-theme')==='light'){
+  document.body.classList.add('light');
+  const btn=document.getElementById('theme-toggle');
+  if(btn)btn.textContent='☀️';
+}
+function showToast(msg, isError = false) {
+  let t = document.getElementById('toast-el');
+  if (!t) { t = document.createElement('div'); t.id = 'toast-el'; t.className = 'toast'; document.body.appendChild(t);     
+  }
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  setTimeout(() => t.classList.add('show'), 10);
+  setTimeout(() => t.classList.remove('show'), 3000);
+  
+}
+function replyMsg(email, subject) {
+  window.open(`mailto:${email}?subject=Re: ${subject}`);
+}
+
+async function deleteMsg(id) {
+  const modal = document.getElementById('confirm-modal');
+  modal.classList.add('open');
+  document.getElementById('confirm-delete-btn').onclick = async () => {
+    modal.classList.remove('open');
+    try {
+      await fetch(`${API}/contact/${id}`, {method: 'DELETE'});
+      showToast('✅ Message deleted successfully!');
+      loadMessages();
+    } catch(e) {
+      showToast('❌ Delete failed!', true);
+    }
+  };
+}
+function toggleSelectAll(cb) {
+  document.querySelectorAll('.msg-cb').forEach(c => c.checked = cb.checked);
+  updateDeleteBtn();
+}
+
+function updateDeleteBtn() {
+  const checked = document.querySelectorAll('.msg-cb:checked').length;
+  const btn = document.getElementById('delete-selected-btn');
+  if(btn) btn.style.display = checked > 0 ? 'inline-block' : 'none';
+}
+
+async function deleteSelected() {
+  const ids = [...document.querySelectorAll('.msg-cb:checked')].map(c => c.value);
+  if(ids.length === 0) return;
+  const modal = document.getElementById('confirm-modal');
+  document.querySelector('.confirm-box p').textContent = `Are you sure you want to delete ${ids.length} message(s)? This cannot be undone.`;
+  modal.classList.add('open');
+  document.getElementById('confirm-delete-btn').onclick = async () => {
+    modal.classList.remove('open');
+    try {
+      await Promise.all(ids.map(id => fetch(`${API}/contact/${id}`, {method:'DELETE'})));
+      showToast(`✅ ${ids.length} message(s) deleted!`);
+      document.getElementById('select-all').checked = false;
+      loadMessages();
+    } catch(e) {
+      showToast('❌ Delete failed!', true);
+    }
+  };
+}
+
+/* Window resize par sidebar state reset kar do (agar desktop pe le jaye) */
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 768) {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('show');
+  }
+});
+</script>
+</body>
+</html>
