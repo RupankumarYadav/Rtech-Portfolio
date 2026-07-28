@@ -1,0 +1,11 @@
+step 1 : cd "E:\My RTech Potfolio\backend\rtech-backend"
+step 2 : cmd
+step 3 : mvn spring-boot:run -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true
+
+mvn spring-boot:run
+
+----:backned reset: -----
+
+taskkill /f /im java.exe
+cd E:\My RTech Potfolio\backend
+mvn spring-boot:run
