@@ -3,7 +3,7 @@
    Author: Rupan Kumar Yadav
    ============================================================ */
 
-const API = 'http://localhost:8080/api';
+const API = 'https://rtech-portfolio.onrender.com/api';
 
 /* ═══════════════════════════════════════════════════════════
    OFFLINE DATA CACHE
