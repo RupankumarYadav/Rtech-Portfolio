@@ -25,8 +25,12 @@
   <div class="loader-bar-wrap">
     <div class="loader-bar"></div>
   </div>
-  <div class="loader-text">Loading RTech Portfolio...</div>
+  <div class="loader-text" id="loader-text">Loading RTech Portfolio...</div>
+  <div class="loader-sub" id="loader-sub"></div>
+  <button class="loader-skip" id="loader-skip" onclick="skipBootWait()" style="display:none">Show saved version →</button>
 </div>
+<!-- Failsafe: agar script.js kisi wajah se load na ho to 2 min baad loader hata do -->
+<script>setTimeout(function(){var l=document.getElementById('loader');if(l)l.classList.add('hide');},120000);</script>
 
 <div id="progress-bar"></div>
 <!-- ═══════════════════════════════════════════════════════
@@ -341,6 +345,7 @@
 
 <!-- Data file — pehle load hota hai -->
 <script src="data.js"></script>
+<script src="sync.js"></script>
 <!-- Main JS -->
 <script src="script.js"></script>
 

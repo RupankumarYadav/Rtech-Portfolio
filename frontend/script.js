@@ -13,24 +13,30 @@ const API = 'https://rtech-portfolio.onrender.com/api';
      hain (data.js ke hardcoded values ki jagah), taki hamesha
      "latest saved" data hi dikhe, purana/default data nahi.
 ═══════════════════════════════════════════════════════════ */
-const CACHE_KEY = 'rtech_data_cache_v1';
+const CACHE_KEY = 'rtech_data_cache_v2';
 const PHOTO_CACHE_KEY = 'rtech_photo_b64_v1';
 
 function saveDataCache() {
   try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify(PORTFOLIO_DATA));
+    const { meta, ...data } = PORTFOLIO_DATA;   // meta cache mein nahi jata
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), data }));
   } catch (e) { /* storage full ya blocked — ignore */ }
 }
 
 function loadDataCache() {
   try {
-    const cached = localStorage.getItem(CACHE_KEY);
-    if (cached) {
-      const parsed = JSON.parse(cached);
-      Object.assign(PORTFOLIO_DATA, parsed);
-      return true;
-    }
-  } catch (e) { /* corrupt cache — ignore, data.js defaults chalenge */ }
+    const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+    if (!cached || !cached.data) return false;
+
+    // data.js snapshot agar cache se NAYA hai to snapshot jeetega
+    // (warna purana cache naye snapshot ko overwrite kar deta)
+    const snapAt = PORTFOLIO_DATA.meta && PORTFOLIO_DATA.meta.snapshotAt
+      ? Date.parse(PORTFOLIO_DATA.meta.snapshotAt) : 0;
+    if (cached.savedAt <= snapAt) return false;
+
+    Object.assign(PORTFOLIO_DATA, cached.data);
+    return true;
+  } catch (e) { /* corrupt cache — ignore, data.js snapshot chalega */ }
   return false;
 }
 
@@ -402,16 +408,15 @@ async function loadProjectStats() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   CHECK BACKEND STATUS
+   BACKEND STATUS BADGE
 ═══════════════════════════════════════════════════════════ */
-async function checkBackend() {
+function setBackendBadge(online) {
   const badge = document.getElementById('api-badge');
-  try {
-    await fetch(`${API}/contact`, { signal: AbortSignal.timeout(3000) });
+  if (!badge) return;
+  if (online) {
     badge.className = 'api-badge online';
     badge.innerHTML = '<span class="dot"></span> Backend Online ✅';
-    loadProjectStats();
-  } catch (e) {
+  } else {
     badge.className = 'api-badge offline';
     badge.innerHTML = '<span class="dot"></span> Backend Offline';
   }
@@ -421,7 +426,7 @@ async function checkBackend() {
    CONTACT FORM
 ═══════════════════════════════════════════════════════════ */
 function initContactForm() {
-  emailjs.init('wMviTifTJ5CRSpBZ2');
+  if (typeof emailjs !== 'undefined') emailjs.init('wMviTifTJ5CRSpBZ2');
   const form = document.getElementById('contact-form');
   const btn  = document.getElementById('submit-btn');
   const msg  = document.getElementById('form-msg');
@@ -519,133 +524,123 @@ function observeFade() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   INIT — page load hone pe sab kuch start hota hai
+   BOOT — loader tab tak chalta hai jab tak backend ka data na aa jaye
+
+   Flow:
+   1. data.js (latest snapshot) + localStorage cache pehle se ready hai
+   2. RTech loader dikhta rehta hai, backend ko baar-baar try karte hain
+      (Render free sleep se uthne mein 30-60 sec lagta hai)
+   3. Data aa gaya  -> fresh data se site khulti hai
+      MAX_WAIT_MS ho gaya / backend down -> snapshot/cache se site khulti hai
 ═══════════════════════════════════════════════════════════ */
+const BOOT = {
+  MAX_WAIT_MS:   90000,  // itni der tak backend ka wait (90 sec)
+  RETRY_MS:      3000,   // har failed try ke baad itna ruko
+  MIN_SHOW_MS:   900,    // loader kam se kam itni der dikhe (flicker na ho)
+  SLOW_HINT_MS:  4000,   // itni der baad "server wake ho raha hai" message
+  SKIP_BTN_MS:   12000,  // itni der baad "Saved version dekho" button
+                         // (button hatana ho to isse bahut bada number kar do)
+};
+
+let bootSkipped = false;
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function setLoaderText(main, sub) {
+  const t = document.getElementById('loader-text');
+  const s = document.getElementById('loader-sub');
+  if (t && main !== undefined) t.textContent = main;
+  if (s && sub  !== undefined) s.textContent = sub;
+}
+
+function hideLoader() {
+  const loader = document.getElementById('loader');
+  if (loader) loader.classList.add('hide');
+}
+
 async function loadFromAPI() {
+  const started = Date.now();
+
+  // Loader ka status text har second update hota hai
+  const ticker = setInterval(() => {
+    const elapsed = Date.now() - started;
+    const sec = Math.floor(elapsed / 1000);
+    if (elapsed > BOOT.SLOW_HINT_MS) {
+      setLoaderText(
+        'Waking up the server...',
+        `Free hosting sleeps when idle — this can take up to a minute (${sec}s)`
+      );
+    }
+    if (elapsed > BOOT.SKIP_BTN_MS) {
+      const btn = document.getElementById('loader-skip');
+      if (btn) btn.style.display = 'inline-block';
+    }
+  }, 1000);
+
   try {
-    const [projRes, skillRes, achRes, eduRes, profRes] = await Promise.all([
-      fetch(`${API}/portfolio/projects`),
-      fetch(`${API}/portfolio/skills`),
-      fetch(`${API}/portfolio/achievements`),
-      fetch(`${API}/portfolio/education`),
-      fetch(`${API}/portfolio/profile`)
-    ]);
-
-    const projects     = await projRes.json();
-    const skills       = await skillRes.json();
-    const achievements = await achRes.json();
-    const education    = await eduRes.json();
-    const profile      = await profRes.json();
-
-    // Projects update
-    if (projects.length > 0) {
-      PORTFOLIO_DATA.projects = projects.map(p => ({
-        id:          p.id,
-        emoji:       p.emoji || '🚀',
-        banner:      p.banner || 'blue',
-        title:       p.title,
-        description: p.description,
-        tech:        p.techStack ? p.techStack.split(',').map(t => t.trim()) : [],
-        github:      p.githubUrl || '#',
-        demo:        p.demoUrl || '#',
-      }));
-    }
-
-    // Skills update
-    if (skills.length > 0) {
-      PORTFOLIO_DATA.skills = skills.map(s => ({
-        icon:  s.icon || '⚡',
-        name:  s.name,
-        color: s.color || 'purple',
-        tags:  s.tags ? s.tags.split(',').map(t => t.trim()) : [],
-      }));
-    }
-
-    // Achievements update
-    if (achievements.length > 0) {
-      PORTFOLIO_DATA.achievements = achievements.map(a => ({
-        icon:   a.icon || '🏆',
-        title:  a.title,
-        issuer: a.issuer,
-        date:   a.dateYear,
-        color:  a.color || 'purple',
-        link:   a.link || '#',
-      }));
-    }
-
-    // Education update
-    if (education.length > 0) {
-      PORTFOLIO_DATA.education = education.map(e => ({
-        year:   e.yearRange,
-        degree: e.degree,
-        school: e.school,
-      }));
-    }
-
-    // Profile / Personal Info update
-    if (profile && Object.keys(profile).length > 0) {
-      const p = PORTFOLIO_DATA.personal;
-      if (profile.name     !== undefined) p.name     = profile.name     || '';
-      if (profile.brand    !== undefined) p.brand    = profile.brand    || '';
-      if (profile.role     !== undefined) p.role     = profile.role     || '';
-      if (profile.tagline  !== undefined) p.tagline  = profile.tagline  || '';
-      if (profile.location !== undefined) p.location = profile.location || '';
-      if (profile.phone    !== undefined) p.phone    = profile.phone    || '';
-      if (profile.email    !== undefined) p.email    = profile.email    || '';
-      if (profile.github   !== undefined) p.github   = profile.github   || '';
-      if (profile.linkedin !== undefined) p.linkedin = profile.linkedin || '';
-      if (profile.degree   !== undefined) p.degree   = profile.degree   || '';
-      if (profile.status   !== undefined) p.status   = profile.status   || '';
-      if (profile.available !== undefined) p.available = profile.available === 'true';
-      if (profile.photo    !== undefined) p.photo    = profile.photo    || '';
-
-      if (profile.roles) {
-        try { PORTFOLIO_DATA.roles = JSON.parse(profile.roles); } catch(e) {}
-      }
-      if (profile.stats) {
-        try { PORTFOLIO_DATA.stats = JSON.parse(profile.stats); } catch(e) {}
-      }
-      if (profile.about) {
-        try { PORTFOLIO_DATA.about = JSON.parse(profile.about); } catch(e) {}
+    while (!bootSkipped && Date.now() - started < BOOT.MAX_WAIT_MS) {
+      try {
+        const raw = await fetchPortfolioRaw(API, 15000);
+        if (bootSkipped) return false;       // user skip kar chuka, ab apply mat karo
+        applyApiData(PORTFOLIO_DATA, raw);
+        saveDataCache();                      // agli baar ke liye latest cache
+        return true;
+      } catch (e) {
+        console.log('Backend abhi ready nahi, retry...', e.message);
+        await sleep(BOOT.RETRY_MS);
       }
     }
-
-    // ✅ Backend se fresh data mil gaya — isko cache kar lo taaki
-    //    agli baar backend offline hone par yahi latest data dikhe
-    saveDataCache();
-
-  } catch(e) {
-    // ❌ Backend offline — hardcoded data.js par mat jao,
-    //    localStorage mein jo pichla saved (real) data hai wahi use hoga
-    //    (ye already loadDataCache() se DOMContentLoaded mein load ho chuka hai)
-    console.log('API offline — using last cached data (or data.js as first-time fallback)');
+    return false;
+  } finally {
+    clearInterval(ticker);
   }
 }
 
-
+function skipBootWait() {
+  bootSkipped = true;
+  setLoaderText('Loading saved version...', '');
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Sabse pehle: agar pehle kabhi backend se real data cache hua hai,
-  // usko load karo — taki offline hone par bhi PURANA DEFAULT nahi,
-  // LATEST SAVED data hi dikhe.
+  const t0 = Date.now();
+
+  // Step 1: pehle cache (agar data.js snapshot se naya ho) — last known data
   loadDataCache();
 
-  // Fir backend se fresh data lene ki koshish karo (agar online hai to update ho jayega + cache bhi update hoga)
-  await loadFromAPI();
+  // Step 2: backend ka wait (loader dikhta rehta hai)
+  const online = await loadFromAPI();
 
-  renderHero();
-  renderAbout();
-  renderSkills();
-  renderProjects();
-  renderAchievements();
-  renderContact();
+  // Loader kam se kam MIN_SHOW_MS dikhe
+  const left = BOOT.MIN_SHOW_MS - (Date.now() - t0);
+  if (left > 0) await sleep(left);
 
-  initTyping();
-  initPhotoUpload();
-  initMobileMenu();
-  initContactForm();
-  observeFade();
-  checkBackend();
+  // Step 3: site render karo (fresh data ya snapshot/cache — jo bhi mila)
+  // try/finally: koi ek section fail ho jaye (jaise emailjs CDN block) to bhi loader hat jaye
+  try {
+    renderHero();
+    renderAbout();
+    renderSkills();
+    renderProjects();
+    renderAchievements();
+    renderContact();
+
+    initTyping();
+    initPhotoUpload();
+    initMobileMenu();
+    initContactForm();
+    observeFade();
+  } catch (e) {
+    console.error('Render error:', e);
+  } finally {
+    setBackendBadge(online);
+    hideLoader();
+  }
+
+  // Analytics sirf tab jab backend online ho
+  if (online) {
+    loadProjectStats();
+    loadVisitorCount();
+  }
 });
 
 /* ═══════════════════════════════════════════════════════════
@@ -674,19 +669,6 @@ function initThemeToggle() {
 document.addEventListener('DOMContentLoaded', () => {
   initThemeToggle();
 });
-
-/* ═══════════════════════════════════════════════════════════
-   LOADING SCREEN
-═══════════════════════════════════════════════════════════ */
-function initLoader() {
-  const loader = document.getElementById('loader');
-  if (!loader) return;
-
-  // Hide loader after 1.4 seconds
-  setTimeout(() => {
-    loader.classList.add('hide');
-  }, 1400);
-}
 
 /* ═══════════════════════════════════════════════════════════
    BACK TO TOP BUTTON
@@ -753,7 +735,5 @@ function animateCount(el, target) {
    ADD TO EXISTING DOMContentLoaded
 ═══════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
-  initLoader();
   initBackToTop();
-  loadVisitorCount();
 });

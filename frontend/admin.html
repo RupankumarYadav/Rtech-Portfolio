@@ -1072,6 +1072,8 @@ body.light .sidebar-toggle {
     <div class="nav-item" onclick="showPage('achievements')"><span class="ni">🏆</span> Achievements</div>
     <div class="nav-section">Links</div>
     <div class="nav-item" onclick="window.open('index.html','_blank')"><span class="ni">🌐</span> View Website</div>
+    <div class="nav-section">Backup</div>
+    <div class="nav-item" onclick="downloadSnapshot()"><span class="ni">💾</span> Save Snapshot</div>
   </div>
 
   <div class="main">
@@ -1391,6 +1393,8 @@ body.light .sidebar-toggle {
   </div>
 </div>
 
+<script src="data.js"></script>
+<script src="sync.js"></script>
 <script>
 const API = 'https://rtech-portfolio.onrender.com/api';
 
@@ -1754,6 +1758,30 @@ async function deleteSelected() {
       showToast('❌ Delete failed!', true);
     }
   };
+}
+
+/* ── SNAPSHOT: backend ka latest data -> data.js file download ──
+   Is file ko frontend/data.js se replace karke GitHub par push karo.
+   Fir Aiven/Render band ho tab bhi website latest data dikhayegi. */
+async function downloadSnapshot() {
+  closeSidebarOnMobile();
+  showToast('⏳ Latest data la raha hu...');
+  try {
+    const raw  = await fetchPortfolioRaw(API, 30000);
+    const snap = JSON.parse(JSON.stringify(PORTFOLIO_DATA));   // deployed data.js = base
+    applyApiData(snap, raw);                                   // us par backend ka latest data
+    const blob = new Blob([buildSnapshotJs(snap)], { type: 'text/javascript' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'data.js';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    showToast('✅ data.js download ho gaya — ise frontend/data.js se replace karke push karo');
+  } catch (e) {
+    showToast('❌ Backend se data nahi aaya (server sleep mein ho sakta hai). 1 minute baad phir try karo.', true);
+  }
 }
 
 /* Window resize par sidebar state reset kar do (agar desktop pe le jaye) */

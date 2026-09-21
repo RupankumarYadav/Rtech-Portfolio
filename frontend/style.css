@@ -1024,14 +1024,36 @@ body.dark .visitor-strip {
 }
 .loader-bar {
   height: 100%;
+  width: 40%;
   background: linear-gradient(90deg, var(--accent), var(--cyan));
   border-radius: 3px;
-  animation: loader-fill 1.2s ease forwards;
+  /* infinite — backend ready hone tak chalta rehta hai */
+  animation: loader-slide 1.2s ease-in-out infinite;
 }
-@keyframes loader-fill {
-  from { width: 0%; }
-  to   { width: 100%; }
+@keyframes loader-slide {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
 }
+.loader-sub {
+  font-size: .75rem;
+  color: rgba(255,255,255,.35);
+  text-align: center;
+  max-width: 300px;
+  padding: 0 1rem;
+  min-height: 1em;
+}
+.loader-skip {
+  background: transparent;
+  color: rgba(255,255,255,.7);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 999px;
+  padding: .5rem 1.1rem;
+  font-size: .8rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+.loader-skip:hover { background: rgba(255,255,255,.08); color: #fff; }
 .loader-text {
   font-family: 'Fira Code', monospace;
   font-size: .8rem;
