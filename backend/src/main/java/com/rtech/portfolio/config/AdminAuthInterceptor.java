@@ -19,11 +19,13 @@ import java.security.MessageDigest;
  * PUBLIC (bina token):
  *   - GET  /api/portfolio/**      (website ka data)
  *   - POST /api/contact           (contact form)
- *   - /api/analytics/**           (visit / view / like)
+ *   - /api/analytics/**           (visit / view / like / visitor counts)
+ *     (except GET /api/analytics/visits/recent — IP addresses hain, protected hai)
  *
  * PROTECTED (token zaroori):
  *   - POST/PUT/DELETE /api/portfolio/**   (add / edit / delete / upload)
  *   - GET/PUT/DELETE  /api/contact/...    (messages padhna, read, delete)
+ *   - GET  /api/analytics/visits/recent   (visitor IP / device list)
  *   - /api/admin/**
  *
  * Agar ADMIN_TOKEN set hi nahi hai to admin actions band rehte hain (safe default).
@@ -68,6 +70,9 @@ public class AdminAuthInterceptor implements HandlerInterceptor {
         }
 
         if (path.startsWith("/api/admin")) {
+            return true;
+        }
+        if (path.equals("/api/analytics/visits/recent")) {
             return true;
         }
         if (path.startsWith("/api/portfolio")) {

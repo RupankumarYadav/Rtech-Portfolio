@@ -21,9 +21,27 @@ public class AnalyticsService {
 
     public void trackVisit(HttpServletRequest request, String page) {
         PageVisitor v = new PageVisitor();
-        v.setIpAddress(request.getRemoteAddr());
+        v.setIpAddress(clientIp(request));
         v.setPageVisited(page);
+        v.setUserAgent(request.getHeader("User-Agent"));
         visitorRepo.save(v);
+    }
+
+    // Render (aur zyada tar hosts) ek proxy ke peeche chalte hain, isliye
+    // request.getRemoteAddr() proxy ka IP deta hai, visitor ka nahi.
+    // Asli visitor ka IP X-Forwarded-For header ke pehle value mein hota hai.
+    private String clientIp(HttpServletRequest request) {
+        String xff = request.getHeader("X-Forwarded-For");
+        if (xff != null && !xff.isBlank()) {
+            return xff.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
+    }
+
+    // Admin panel ke "Recent Visitors" table ke liye — latest N visits
+    public List<PageVisitor> getRecentVisits(int limit) {
+        return visitorRepo.findAllByOrderByVisitedAtDesc(
+                org.springframework.data.domain.PageRequest.of(0, Math.min(Math.max(limit, 1), 200)));
     }
 
     public long getTotalVisitors() {

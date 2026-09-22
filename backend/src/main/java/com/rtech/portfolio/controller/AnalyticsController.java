@@ -36,6 +36,15 @@ public class AnalyticsController {
         return ResponseEntity.ok(res);
     }
 
+    // GET /api/analytics/visits/recent?limit=50
+    // Admin-only (AdminAuthInterceptor isse protect karta hai) — kab, kaunsa
+    // page, kis device se visit hua, uski list.
+    @GetMapping("/visits/recent")
+    public ResponseEntity<List<com.rtech.portfolio.model.PageVisitor>> recentVisits(
+            @RequestParam(defaultValue = "50") int limit) {
+        return ResponseEntity.ok(service.getRecentVisits(limit));
+    }
+
     // GET /api/analytics/projects
     @GetMapping("/projects")
     public ResponseEntity<List<ProjectStat>> projects() {

@@ -20,6 +20,9 @@ public class PageVisitor {
     @Column(name = "visited_at")
     private LocalDateTime visitedAt;
 
+    @Column(name = "user_agent", length = 255)
+    private String userAgent;
+
     @PrePersist
     public void prePersist() { this.visitedAt = LocalDateTime.now(); }
 
@@ -30,4 +33,6 @@ public class PageVisitor {
     public String getPageVisited()                 { return pageVisited; }
     public void setPageVisited(String pageVisited) { this.pageVisited = pageVisited; }
     public LocalDateTime getVisitedAt()            { return visitedAt; }
+    public String getUserAgent()                   { return userAgent; }
+    public void setUserAgent(String userAgent)     { this.userAgent = userAgent; }
 }

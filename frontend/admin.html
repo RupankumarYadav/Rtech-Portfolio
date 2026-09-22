@@ -1117,6 +1117,17 @@ body.light .sidebar-toggle {
       <div class="page-title">Visitor Analytics</div>
       <div class="page-sub">Page-wise visitor breakdown</div>
       <div class="stats-grid" id="visitor-pages"></div>
+
+      <div class="table-card" style="margin-top:1.5rem">
+        <div class="table-header">
+          <div class="table-title">🕒 Recent Visitors</div>
+          <div style="color:#64748b;font-size:.78rem">Last 50 visits — time, page and device</div>
+        </div>
+        <table class="table">
+          <thead><tr><th>Time</th><th>Page</th><th>Device</th><th>IP</th></tr></thead>
+          <tbody id="recent-visits-body"><tr><td colspan="4" style="text-align:center;color:#64748b;padding:2rem">Loading...</td></tr></tbody>
+        </table>
+      </div>
     </div>
 
     <!-- HOME -->
@@ -1563,6 +1574,38 @@ async function loadVisitors(){
       <div class="stat-card"><div class="stat-icon" style="background:${colors[page]||'rgba(99,102,241,.1)'}">${icons[page]||'📄'}</div>
       <div><div class="stat-val">${count}</div><div class="stat-lbl">${page.charAt(0).toUpperCase()+page.slice(1)} visits</div></div></div>`).join('');
   }catch(e){document.getElementById('visitor-pages').innerHTML='<div style="color:#64748b">Backend offline</div>';}
+
+  loadRecentVisits();
+}
+
+// User-Agent string se simple device/browser guess (server storage se aata hai)
+function describeDevice(ua) {
+  if (!ua) return '—';
+  const isMobile = /Mobi|Android|iPhone|iPad/i.test(ua);
+  let browser = 'Browser';
+  if (/Edg\//.test(ua)) browser = 'Edge';
+  else if (/Chrome\//.test(ua) && !/OPR\//.test(ua)) browser = 'Chrome';
+  else if (/Firefox\//.test(ua)) browser = 'Firefox';
+  else if (/Safari\//.test(ua) && !/Chrome/.test(ua)) browser = 'Safari';
+  else if (/OPR\//.test(ua)) browser = 'Opera';
+  return (isMobile ? '📱 Mobile' : '💻 Desktop') + ' · ' + browser;
+}
+
+async function loadRecentVisits() {
+  const body = document.getElementById('recent-visits-body');
+  try {
+    const visits = await (await fetch(`${API}/analytics/visits/recent?limit=50`)).json();
+    body.innerHTML = visits.length
+      ? visits.map(v => `<tr>
+          <td style="color:#64748b;font-size:.8rem">${v.visitedAt ? new Date(v.visitedAt).toLocaleString('en-IN') : '—'}</td>
+          <td style="text-transform:capitalize">${v.pageVisited || '—'}</td>
+          <td style="font-size:.8rem">${describeDevice(v.userAgent)}</td>
+          <td style="color:#64748b;font-size:.78rem">${v.ipAddress || '—'}</td>
+        </tr>`).join('')
+      : '<tr><td colspan="4"><div class="empty-state"><div class="ei">👁️</div>No visits yet</div></td></tr>';
+  } catch (e) {
+    body.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#64748b;padding:2rem">Backend offline, or login again if this keeps happening</td></tr>';
+  }
 }
 
 async function loadPortfolioProjects(){
