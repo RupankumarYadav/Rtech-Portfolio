@@ -1029,15 +1029,11 @@ body.light .sidebar-toggle {
       <p>Portfolio Management Panel</p>
     </div>
     <div class="form-group">
-      <label>Username</label>
-      <input type="text" id="username" placeholder="rupan"/>
+      <label>Admin Password</label>
+      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
     </div>
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" id="password" placeholder="••••••••"/>
-    </div>
-    <button class="login-btn" onclick="doLogin()">Login →</button>
-    <div class="login-error" id="login-error">Wrong username or password!</div>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Login →</button>
+    <div class="login-error" id="login-error">Wrong password!</div>
   </div>
 </div>
 
@@ -1398,26 +1394,89 @@ body.light .sidebar-toggle {
 <script>
 const API = 'https://rtech-portfolio.onrender.com/api';
 
-function doLogin() {
-  const u = document.getElementById('username').value.trim();
-  const p = document.getElementById('password').value.trim();
-  if (u === 'rupan' && p === 'Rupan@123') {
-    sessionStorage.setItem('admin','true');
-    document.getElementById('login-page').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-    loadAll();
-  } else { document.getElementById('login-error').style.display = 'block'; }
-}
-function doLogout() {
-  sessionStorage.removeItem('admin');
-  document.getElementById('dashboard').style.display = 'none';
-  document.getElementById('login-page').style.display = 'flex';
-}
-document.getElementById('password').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-if (sessionStorage.getItem('admin')) {
+/* ── ADMIN AUTH ─────────────────────────────────────────────
+   Password ab is file mein NAHI hai. Login par jo password daalte ho wo
+   backend ke ADMIN_TOKEN se match hota hai (Render Environment variable).
+   Sahi ho to token sessionStorage mein rehta hai (tab band = logout)
+   aur har API request ke saath X-Admin-Token header ban kar jata hai. */
+const _origFetch = window.fetch.bind(window);
+let _sessionExpiredShown = false;
+
+window.fetch = async (url, opts = {}) => {
+  const isApi = typeof url === 'string' && url.startsWith(API);
+  if (isApi) {
+    const token = sessionStorage.getItem('admin_token') || '';
+    opts = { ...opts, headers: { ...(opts.headers || {}), 'X-Admin-Token': token } };
+  }
+  const res = await _origFetch(url, opts);
+  if (isApi && res.status === 401 && !url.includes('/admin/verify')) sessionExpired();
+  return res;
+};
+
+function showDashboard() {
   document.getElementById('login-page').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
   loadAll();
+}
+
+function sessionExpired() {
+  if (_sessionExpiredShown) return;
+  _sessionExpiredShown = true;
+  doLogout();
+  const err = document.getElementById('login-error');
+  err.textContent = 'Session expired ya password galat. Dobara login karo.';
+  err.style.display = 'block';
+  setTimeout(() => { _sessionExpiredShown = false; }, 1500);
+}
+
+async function doLogin() {
+  const pw   = document.getElementById('password').value.trim();
+  const btn  = document.getElementById('login-btn');
+  const err  = document.getElementById('login-error');
+  err.style.display = 'none';
+  if (!pw) { err.textContent = 'Password daalo.'; err.style.display = 'block'; return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Checking... (server sleep mein ho to 1 min lag sakta hai)';
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 70000);
+  try {
+    const res = await _origFetch(`${API}/admin/verify`, {
+      headers: { 'X-Admin-Token': pw },
+      signal: ctrl.signal,
+    });
+    if (res.ok) {
+      sessionStorage.setItem('admin_token', pw);
+      document.getElementById('password').value = '';
+      showDashboard();
+    } else if (res.status === 401) {
+      err.textContent = 'Wrong password!';
+      err.style.display = 'block';
+    } else {
+      err.textContent = 'Server abhi ready nahi (' + res.status + '). Thodi der baad try karo.';
+      err.style.display = 'block';
+    }
+  } catch (e) {
+    err.textContent = 'Server se connect nahi hua. Thodi der baad try karo.';
+    err.style.display = 'block';
+  } finally {
+    clearTimeout(timer);
+    btn.disabled = false;
+    btn.textContent = 'Login →';
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('admin_token');
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('login-page').style.display = 'flex';
+}
+
+document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+// Pehle se login hai (same tab) to seedha dashboard
+if (sessionStorage.getItem('admin_token')) {
+  showDashboard();
 }
 
 /* ── MOBILE SIDEBAR TOGGLE ─────────────────────────────── */

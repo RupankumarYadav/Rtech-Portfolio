@@ -188,7 +188,7 @@ function renderProjects() {
 
   const container = document.getElementById('projects-container');
   container.innerHTML = PORTFOLIO_DATA.projects.map((proj, i) => {
-    const isLiked = liked[proj.id] || false;
+    const isLiked = liked[proj.title] || false;   // toggleLike bhi title se save karta hai
     return `
       <div class="proj-card fade ${i % 3 === 1 ? 'd1' : i % 3 === 2 ? 'd2' : ''}" data-project="${proj.title}">
         <div class="proj-banner ${bannerMap[proj.banner] || 'b-blue'}">${proj.emoji}</div>
@@ -636,12 +636,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     hideLoader();
   }
 
+  // Strip mein "Projects Built" ab asli projects ki ginti se aata hai
+  const vProj = document.getElementById('v-projects');
+  if (vProj) vProj.textContent = PORTFOLIO_DATA.projects.length;
+
   // Analytics sirf tab jab backend online ho
   if (online) {
     loadProjectStats();
+    await trackVisit();        // pehle apni visit likho, phir count dikhao
     loadVisitorCount();
   }
 });
+
+/* Visitor tracking — ek browser session mein sirf 1 baar.
+   Local testing (localhost) ki visits count nahi hoti. */
+async function trackVisit() {
+  try {
+    const host = location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1' || host === '') return;
+    if (sessionStorage.getItem('rtech_visit_tracked')) return;
+    sessionStorage.setItem('rtech_visit_tracked', '1');
+    await fetch(`${API}/analytics/visit?page=home`, { method: 'POST' });
+  } catch (e) { /* backend offline — ignore */ }
+}
 
 /* ═══════════════════════════════════════════════════════════
    DARK / LIGHT MODE TOGGLE
